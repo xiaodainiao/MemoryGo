@@ -16,15 +16,15 @@ git clone git@github.com:xiaodainiao/MemoryGo.git
 go run main.go
 ```
 
-![image-20230710160059633](C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20230710160059633.png)
+![在这里插入图片描述](https://img-blog.csdnimg.cn/d9f5f1806826481c8ca52d206589101c.png)
 
 Memory默认监听127.0.0.1:6379,可以使用redis-cli 或者NetAssist连接服务器
 
-![image-20230710160534011](C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20230710160534011.png)
+![在这里插入图片描述](https://img-blog.csdnimg.cn/16e1e656512d49529e5bb05b7764a949.png)
 
 Memory会从redis.conf读取配置文件，包括端口号，是否开启持久化，以及集群节点的IP
 
-![image-20230710160815944](C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20230710160815944.png)
+![在这里插入图片描述](https://img-blog.csdnimg.cn/69c34860c3d84c429c4bdd413a778752.png)
 
 ## 集群模式
 
@@ -37,9 +37,7 @@ peers 127.0.0.1:6380, 127.0.0.1:6381  //集群其他节点地址
 
 可以直接将文件build打包成可执行文件，node1.conf和node2.conf，进行配置，在本地启动一个双节点集群
 
-<img src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20230710161057147.png" alt="image-20230710161057147"  />
-
-![image-20230710161116228](C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20230710161116228.png)
+![在这里插入图片描述](https://img-blog.csdnimg.cn/03db57530f7042108568013be7bd8998.png)
 
 集群模式下，只要连接任意一台节点就可以访问集群中的所有数据：
 
@@ -125,4 +123,31 @@ redis-cli -p 6380
     └── server.go
 
 ```
+- 根目录: main 函数，执行入口
+- config: 配置文件解析
+- interface: 一些模块间的接口定义
+- lib: 各种工具，比如logger、同步和通配符
 
+- tcp: tcp 服务器实现
+- resp: redis 协议解析器
+- datastruct: redis 的各类数据结构实现
+  - dict: hash 表
+- database: 存储引擎核心
+  - server.go: redis 服务实例, 支持多数据库, 持久化, 主从复制等能力
+  - database.go: 单个 database 的数据结构和功能
+  - router.go: 将命令路由给响应的处理函数
+  - keys.go: del、ttl、expire 等通用命令实现
+  - string.go: get、set 等字符串命令实现
+  - list.go: lpush、lindex 等列表命令实现
+  - hash.go: hget、hset 等哈希表命令实现
+  - transaction.go: 单机事务实现
+- cluster: 集群
+  - cluster.go: 集群入口
+  - com.go: 节点间通信
+  - del.go: delete 命令原子性实现
+  - keys.go: key 相关命令集群中实现
+  - mset.go: mset 命令原子性实现
+  - multi.go: 集群内事务实现
+  - rename.go: rename 命令集群实现
+  - tcc.go: tcc 分布式事务底层实现
+- aof: AOF 持久化实现
